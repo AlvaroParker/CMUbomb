@@ -14,7 +14,7 @@ disassemble main
 
 We have the following output:
 
-```gdb-output
+```asm
 0x08048a52 <+162>:   call   0x80491fc <read_line>
 0x08048a57 <+167>:   add    $0xfffffff4,%esp
 0x08048a5a <+170>:   push   %eax
