@@ -2,6 +2,8 @@
 
 ## Phase 1
 
+_Note: We are using AT&T assembly syntax_
+
 We have to defuse the phase 1 of the bomb
 
 Using gdb
