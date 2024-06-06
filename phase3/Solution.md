@@ -86,7 +86,7 @@ _Note: We are using the Intel assembly syntax now_
 0x08048c9f <+263>:   ret
 ```
 
-We can see the function epilogue from instruction `0` to instruction `6`. After this we set up a call to the function `sscanf` by pushing the parameters to the stack:
+We can see the function prologue from instruction `0` to instruction `6`. After this we set up a call to the function `sscanf` by pushing the parameters to the stack:
 
 ```asm
 0x08048b9f <+7>:     mov    edx,DWORD PTR [ebp+0x8]

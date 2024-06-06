@@ -44,9 +44,9 @@ disassembling the function `phase_1` on `gdb` gives us the following:
 0x08048b46 <+38>:    ret
 ```
 
-We have the epilogue on the first two instructions, then a subtraction to the `esp` pointer indicating that we are allocating space on the stack.
+We have the prologue on the first two instructions, then a subtraction to the `esp` pointer indicating that we are allocating space on the stack.
 
-Let's put a breakpoint after the epilogue and stack allocation:
+Let's put a breakpoint after the prologue and stack allocation:
 
 ```
 b *(phase_1+12)

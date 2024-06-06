@@ -34,7 +34,7 @@ We are now on the phase 4, let's analyze the function `phase_4` by running `disa
 0x08048d2a <+74>:    ret
 ```
 
-Between instructions `0` and `9` is our function epilogue. Then the next instructions push the parameters to call the `sscanf` function:
+Between instructions `0` and `9` is our function prologue. Then the next instructions push the parameters to call the `sscanf` function:
 
 ```asm
 0x08048cec <+12>:    lea    eax,[ebp-0x4]
@@ -132,9 +132,9 @@ Let's analyze `func4` to check what our input value should be such that the `fun
 0x08048cdd <+61>:    ret
 ```
 
-There are 3 main part on this function, the epilogue (+ some other instructions) the central part of the function which is the one that produces the return value, and the prologue.
+There are 3 main part on this function, the prologue (+ some other instructions) the central part of the function which is the one that produces the return value, and the epilogue.
 
-Let's analyze the epilogue:
+Let's analyze the prologue:
 
 ```asm
 0x08048ca0 <+0>:     push   ebp
@@ -147,7 +147,7 @@ Let's analyze the epilogue:
 0x08048cae <+14>:    jle    0x8048cd0 <func4+48>
 ```
 
-Between instructions `0` and `7` we see the function epilogue and some stack allocation. After this, on instruction `8` we load the parameter of the function `func4` to the register `ebx`. This means that if in phase 4 we input a string `"5"`, then the ebx register will store an int value `5`.
+Between instructions `0` and `7` we see the function prologue and some stack allocation. After this, on instruction `8` we load the parameter of the function `func4` to the register `ebx`. This means that if in phase 4 we input a string `"5"`, then the ebx register will store an int value `5`.
 
 After this, on instruction `11` it compares the function parameter with `1`, if they are less or equal than 1, then it jump to instructino `48` which is the start of the function prologue which returns the same value `ebx` .
 

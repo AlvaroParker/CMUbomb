@@ -56,7 +56,7 @@ We've reached phase 5. Let's analyze the `phase_5` function:
 
 We can split the function in 4 main sections.
 
-In the first section (instruction `0` to instruction `28`) we have the functino epilogue, we allocate some space in the stack and we check the length of the input string we gave to the `phase_5` function using the `string_length` function. If the length is equal to `0x6` (`6` in decimal) we continue, if not, the bomb explotes.
+In the first section (instruction `0` to instruction `28`) we have the functino prologue, we allocate some space in the stack and we check the length of the input string we gave to the `phase_5` function using the `string_length` function. If the length is equal to `0x6` (`6` in decimal) we continue, if not, the bomb explotes.
 
 ```asm
 0x08048d2c <+0>:     push   ebp
