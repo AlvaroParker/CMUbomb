@@ -94,17 +94,17 @@ lay next
 
 We see the following:
 
-```
-│B+>0x8048b2c <phase_1+12>  push   $0x80497c0
-│   0x8048b31 <phase_1+17>  push   %eax
-│   0x8048b32 <phase_1+18>  call   0x8049030 <strings_not_equal>
-│   0x8048b37 <phase_1+23>  add    $0x10,%esp
-│   0x8048b3a <phase_1+26>  test   %eax,%eax
-│   0x8048b3c <phase_1+28>  je     0x8048b43 <phase_1+35>
-│   0x8048b3e <phase_1+30>  call   0x80494fc <explode_bomb>
-│   0x8048b43 <phase_1+35>  mov    %ebp,%esp
-│   0x8048b45 <phase_1+37>  pop    %ebp
-│   0x8048b46 <phase_1+38>  ret
+```asm
+B+>0x8048b2c <phase_1+12>  push   $0x80497c0
+0x8048b31 <phase_1+17>  push   %eax
+0x8048b32 <phase_1+18>  call   0x8049030 <strings_not_equal>
+0x8048b37 <phase_1+23>  add    $0x10,%esp
+0x8048b3a <phase_1+26>  test   %eax,%eax
+0x8048b3c <phase_1+28>  je     0x8048b43 <phase_1+35>
+0x8048b3e <phase_1+30>  call   0x80494fc <explode_bomb>
+0x8048b43 <phase_1+35>  mov    %ebp,%esp
+0x8048b45 <phase_1+37>  pop    %ebp
+0x8048b46 <phase_1+38>  ret
 ```
 
 We are at the instruction `12` on the function `phase_1`. We see that there's an incoming function call `strings_not_equal` so let's set a breakpoint there to analize the arguments that this function is called with:
@@ -121,24 +121,24 @@ c
 
 We are now on the instruction `18` on the function `phase_1`:
 
-```
-│B+ 0x8048b2c <phase_1+12>  push   $0x80497c0
-│   0x8048b31 <phase_1+17>  push   %eax
-│B+>0x8048b32 <phase_1+18>  call   0x8049030 <strings_not_equal>
-│   0x8048b37 <phase_1+23>  add    $0x10,%esp
-│   0x8048b3a <phase_1+26>  test   %eax,%eax
-│   0x8048b3c <phase_1+28>  je     0x8048b43 <phase_1+35>
-│   0x8048b3e <phase_1+30>  call   0x80494fc <explode_bomb>
-│   0x8048b43 <phase_1+35>  mov    %ebp,%esp
-│   0x8048b45 <phase_1+37>  pop    %ebp
-│   0x8048b46 <phase_1+38>  ret
+```asm
+B+ 0x8048b2c <phase_1+12>  push   $0x80497c0
+0x8048b31 <phase_1+17>  push   %eax
+B+>0x8048b32 <phase_1+18>  call   0x8049030 <strings_not_equal>
+0x8048b37 <phase_1+23>  add    $0x10,%esp
+0x8048b3a <phase_1+26>  test   %eax,%eax
+0x8048b3c <phase_1+28>  je     0x8048b43 <phase_1+35>
+0x8048b3e <phase_1+30>  call   0x80494fc <explode_bomb>
+0x8048b43 <phase_1+35>  mov    %ebp,%esp
+0x8048b45 <phase_1+37>  pop    %ebp
+0x8048b46 <phase_1+38>  ret
 ```
 
 So let's check the arguments! We see that the arguments are passed using the stack (there are two `push`) instructions before our function is called:
 
-```
-│B+ 0x8048b2c <phase_1+12>  push   $0x80497c0
-│   0x8048b31 <phase_1+17>  push   %eax
+```asm
+B+ 0x8048b2c <phase_1+12>  push   $0x80497c0
+0x8048b31 <phase_1+17>  push   %eax
 ```
 
 Let's check those values (`%eax` and `0x80497c0`) using gdb:
