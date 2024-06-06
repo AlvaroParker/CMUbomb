@@ -4,7 +4,7 @@
 
 Now we have to disassemble the `phase_2` function to be able to defuse the bomb:
 
-```
+```asm
  0x08048b48 <+0>:     push   %ebp
  0x08048b49 <+1>:     mov    %esp,%ebp
  0x08048b4b <+3>:     sub    $0x20,%esp # Ingrease the stack by 32 bytes
@@ -139,15 +139,15 @@ Breakpoint 3, 0x08048fff in read_six_numbers ()
 We are interested in the second argument of `sscanf` as this is the format string. We can see that the format string is `"%d %d %d %d %d %d"`. So we are parsing 6 numbers separated by space.
 After executing the `sscanf` function, we are left with the following instructions
 
-```
-   0x08048fff <+39>:    call   0x8048860 <sscanf@plt>
-   0x08049004 <+44>:    add    $0x20,%esp
-   0x08049007 <+47>:    cmp    $0x5,%eax
-   0x0804900a <+50>:    jg     0x8049011 <read_six_numbers+57>
-   0x0804900c <+52>:    call   0x80494fc <explode_bomb>
-   0x08049011 <+57>:    mov    %ebp,%esp
-   0x08049013 <+59>:    pop    %ebp
-   0x08049014 <+60>:    ret
+```asm
+0x08048fff <+39>:    call   0x8048860 <sscanf@plt>
+0x08049004 <+44>:    add    $0x20,%esp
+0x08049007 <+47>:    cmp    $0x5,%eax
+0x0804900a <+50>:    jg     0x8049011 <read_six_numbers+57>
+0x0804900c <+52>:    call   0x80494fc <explode_bomb>
+0x08049011 <+57>:    mov    %ebp,%esp
+0x08049013 <+59>:    pop    %ebp
+0x08049014 <+60>:    ret
 ```
 
 We can see that we are checking that the return value (stored at register `eax`) is `5`. So we are checking that the `scanff` function sucesfully scanned `6` elements. If we did scan all of them correctly,
@@ -157,67 +157,67 @@ Ok, so we know that the seconds fase expect an input of 6 numbers separated by s
 
 Let's analyze now what happens on `phase_2` after returning from `read_six_numbers`:
 
-```
-   0x08048b5b <+19>:    call   0x8048fd8 <read_six_numbers>
-   0x08048b60 <+24>:    add    $0x10,%esp
-   0x08048b63 <+27>:    cmpl   $0x1,-0x18(%ebp)
-   0x08048b67 <+31>:    je     0x8048b6e <phase_2+38>
-   0x08048b69 <+33>:    call   0x80494fc <explode_bomb>
-   0x08048b6e <+38>:    mov    $0x1,%ebx
-   0x08048b73 <+43>:    lea    -0x18(%ebp),%esi
-   0x08048b76 <+46>:    lea    0x1(%ebx),%eax
-   0x08048b79 <+49>:    imul   -0x4(%esi,%ebx,4),%eax
-   0x08048b7e <+54>:    cmp    %eax,(%esi,%ebx,4)
-   0x08048b81 <+57>:    je     0x8048b88 <phase_2+64>
-   0x08048b83 <+59>:    call   0x80494fc <explode_bomb>
-   0x08048b88 <+64>:    inc    %ebx
-   0x08048b89 <+65>:    cmp    $0x5,%ebx
-   0x08048b8c <+68>:    jle    0x8048b76 <phase_2+46>
-   0x08048b8e <+70>:    lea    -0x28(%ebp),%esp
-   0x08048b91 <+73>:    pop    %ebx
-   0x08048b92 <+74>:    pop    %esi
-   0x08048b93 <+75>:    mov    %ebp,%esp
-   0x08048b95 <+77>:    pop    %ebp
-   0x08048b96 <+78>:    ret
+```asm
+0x08048b5b <+19>:    call   0x8048fd8 <read_six_numbers>
+0x08048b60 <+24>:    add    $0x10,%esp
+0x08048b63 <+27>:    cmpl   $0x1,-0x18(%ebp)
+0x08048b67 <+31>:    je     0x8048b6e <phase_2+38>
+0x08048b69 <+33>:    call   0x80494fc <explode_bomb>
+0x08048b6e <+38>:    mov    $0x1,%ebx
+0x08048b73 <+43>:    lea    -0x18(%ebp),%esi
+0x08048b76 <+46>:    lea    0x1(%ebx),%eax
+0x08048b79 <+49>:    imul   -0x4(%esi,%ebx,4),%eax
+0x08048b7e <+54>:    cmp    %eax,(%esi,%ebx,4)
+0x08048b81 <+57>:    je     0x8048b88 <phase_2+64>
+0x08048b83 <+59>:    call   0x80494fc <explode_bomb>
+0x08048b88 <+64>:    inc    %ebx
+0x08048b89 <+65>:    cmp    $0x5,%ebx
+0x08048b8c <+68>:    jle    0x8048b76 <phase_2+46>
+0x08048b8e <+70>:    lea    -0x28(%ebp),%esp
+0x08048b91 <+73>:    pop    %ebx
+0x08048b92 <+74>:    pop    %esi
+0x08048b93 <+75>:    mov    %ebp,%esp
+0x08048b95 <+77>:    pop    %ebp
+0x08048b96 <+78>:    ret
 ```
 
 We see that we adjust our `%esp` (Pointer to the top of the stack) by adding `0x10` (`16` in decimal) and hence decreacing the stack by 16 bytes. Next we compare the first scanned number that `sscanf` with `0x1` at instruction `27`:
 
-```
-   0x08048b63 <+27>:    cmpl   $0x1,-0x18(%ebp)
-   0x08048b67 <+31>:    je     0x8048b6e <phase_2+38>
+```asm
+0x08048b63 <+27>:    cmpl   $0x1,-0x18(%ebp)
+0x08048b67 <+31>:    je     0x8048b6e <phase_2+38>
 ```
 
 If the first scanned number is equal to 1, we continue. If it's not equal, we explote the bomb. That's it! We got our first element! Our input are 6 numbers separated by space and now we know that the first number must be equal to 1 to prevent the bomb from exploting.
 
 Now let's continue analyzing the next instructinos. After checking that our first number is `1`, we then jump to instruction 38:
 
-```
-   0x08048b6e <+38>:    mov    $0x1,%ebx
-   0x08048b73 <+43>:    lea    -0x18(%ebp),%esi
-   0x08048b76 <+46>:    lea    0x1(%ebx),%eax
-   0x08048b79 <+49>:    imul   -0x4(%esi,%ebx,4),%eax
-   0x08048b7e <+54>:    cmp    %eax,(%esi,%ebx,4)
-   0x08048b81 <+57>:    je     0x8048b88 <phase_2+64>
-   0x08048b83 <+59>:    call   0x80494fc <explode_bomb>
-   0x08048b88 <+64>:    inc    %ebx
-   0x08048b89 <+65>:    cmp    $0x5,%ebx
-   0x08048b8c <+68>:    jle    0x8048b76 <phase_2+46>
-   0x08048b8e <+70>:    lea    -0x28(%ebp),%esp
-   0x08048b91 <+73>:    pop    %ebx
-   0x08048b92 <+74>:    pop    %esi
-   0x08048b93 <+75>:    mov    %ebp,%esp
-   0x08048b95 <+77>:    pop    %ebp
-   0x08048b96 <+78>:    ret
+```asm
+0x08048b6e <+38>:    mov    $0x1,%ebx
+0x08048b73 <+43>:    lea    -0x18(%ebp),%esi
+0x08048b76 <+46>:    lea    0x1(%ebx),%eax
+0x08048b79 <+49>:    imul   -0x4(%esi,%ebx,4),%eax
+0x08048b7e <+54>:    cmp    %eax,(%esi,%ebx,4)
+0x08048b81 <+57>:    je     0x8048b88 <phase_2+64>
+0x08048b83 <+59>:    call   0x80494fc <explode_bomb>
+0x08048b88 <+64>:    inc    %ebx
+0x08048b89 <+65>:    cmp    $0x5,%ebx
+0x08048b8c <+68>:    jle    0x8048b76 <phase_2+46>
+0x08048b8e <+70>:    lea    -0x28(%ebp),%esp
+0x08048b91 <+73>:    pop    %ebx
+0x08048b92 <+74>:    pop    %esi
+0x08048b93 <+75>:    mov    %ebp,%esp
+0x08048b95 <+77>:    pop    %ebp
+0x08048b96 <+78>:    ret
 ```
 
 Before anaylzing line by line, let's notice a thing first,on instruction `64`, `65` and `68` we are definining the conditions for a loop. We increase the `%ebx`, we compare it to `%0x5` and if if is
 less or equal we continue the loop, if it's greater, we break the loop. To continue the loop we jump to the instruction at `46`. So we have a loop defined between instructions `46` and `68`. Now let's analyze
 the 2 instructions before the loop (`38` and `43`):
 
-```
-   0x08048b6e <+38>:    mov    $0x1,%ebx
-   0x08048b73 <+43>:    lea    -0x18(%ebp),%esi
+```asm
+0x08048b6e <+38>:    mov    $0x1,%ebx
+0x08048b73 <+43>:    lea    -0x18(%ebp),%esi
 ```
 
 On instruction `38` we mov the value to `ebx`. Remember that `ebx` is used to break the loop we described before. So we initialize `ebx` and the load the effective address `-0x18(%ebp)` into the `esi` register. This address contains the first
@@ -227,15 +227,15 @@ So after this 2 instruction we initialize the loop.
 
 Let's analyze the loop, remeber that the initial value of our `ebx` register is `0x1` (`1` in decimal)
 
-```
-   0x08048b76 <+46>:    lea    0x1(%ebx),%eax
-   0x08048b79 <+49>:    imul   -0x4(%esi,%ebx,4),%eax
-   0x08048b7e <+54>:    cmp    %eax,(%esi,%ebx,4)
-   0x08048b81 <+57>:    je     0x8048b88 <phase_2+64>
-   0x08048b83 <+59>:    call   0x80494fc <explode_bomb>
-   0x08048b88 <+64>:    inc    %ebx
-   0x08048b89 <+65>:    cmp    $0x5,%ebx
-   0x08048b8c <+68>:    jle    0x8048b76 <phase_2+46>
+```asm
+0x08048b76 <+46>:    lea    0x1(%ebx),%eax
+0x08048b79 <+49>:    imul   -0x4(%esi,%ebx,4),%eax
+0x08048b7e <+54>:    cmp    %eax,(%esi,%ebx,4)
+0x08048b81 <+57>:    je     0x8048b88 <phase_2+64>
+0x08048b83 <+59>:    call   0x80494fc <explode_bomb>
+0x08048b88 <+64>:    inc    %ebx
+0x08048b89 <+65>:    cmp    $0x5,%ebx
+0x08048b8c <+68>:    jle    0x8048b76 <phase_2+46>
 ```
 
 So let's iterative one time and let's consider `arr` is the array of the numbers we passed as input.
@@ -262,25 +262,25 @@ while (counter <= 5) {
 
 We have to create an array that can pass this while loop so our function returns. For each element index `i` at the array, the following condition has to be true
 
-```
+```c
 arr[i] == arr[i - 1] * (i + 1)
 ```
 
 Let's calculate `arr[1]`:
 
-```
+```c
 arr[1] = arr[1 - 1] * (1 + 1) = arr[0] * 2 =  1 * 2 = 2
 ```
 
 We now know that `arr[1] = 2`, let's do it for `arr[2]`:
 
-```
+```c
 arr[2] = arr[2 - 1] (2 + 1) = arr[1] * 3 = 2 * 3 = 6
 ```
 
 We have that `arr[2] = 6`. Now for the rest of the elements:
 
-```
+```c
 arr[3] = arr[2] * (4) = 6 * 4 = 24
 arr[4] = arr[3] * (5) = 24 * 5 = 120
 arr [5] = arr[4] * 6 = 120 * 6 = 720
