@@ -75,7 +75,7 @@ The register `ebx` doesn't seem to have any meaning so we could assume that it w
 
 Ok, so we now that we pass the input to the `read_six_numbers`, now let's check what that function does by disassembling it:
 
-```
+```asm
 0x08048fd8 <+0>:     push   %ebp
 0x08048fd9 <+1>:     mov    %esp,%ebp
 0x08048fdb <+3>:     sub    $0x8,%esp
